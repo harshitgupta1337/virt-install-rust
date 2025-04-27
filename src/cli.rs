@@ -18,9 +18,13 @@ pub struct CliArgs {
 
     /// Path to the disk image
     #[arg(long)]
-    pub disk: String,
+    pub disk_path: String,
 
     /// Path to the CD-ROM ISO (optional)
     #[arg(long)]
-    pub cdrom: Option<String>,
+    pub cdrom_path: Option<String>,
+
+    /// Only output the generated domain XML, do not create the VM
+    #[arg(long, default_value_t = false)]
+    pub dry_run: bool,
 }

@@ -18,8 +18,12 @@ fn main() {
     let domain_xml = generate_domain_xml(&args);
     info!("Generated domain XML:\n{}", domain_xml);
 
-    match create_and_start_domain(&domain_xml) {
-        Ok(_) => println!("VM '{}' created and started successfully.", args.name),
-        Err(e) => eprintln!("Error: {}", e),
+    if args.dry_run {
+        info!("Exiting w/o creating domain because --dry-run was specified.")
+    } else {
+        match create_and_start_domain(&domain_xml) {
+            Ok(_) => println!("VM '{}' created and started successfully.", args.name),
+            Err(e) => eprintln!("Error: {}", e),
+        }
     }
 }

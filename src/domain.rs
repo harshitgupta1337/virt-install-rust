@@ -1,23 +1,23 @@
 use crate::cli::CliArgs;
-//use xmltree::{Element, XMLNode};
+use xmltree::{Element, XMLNode};
 
 /// Build the libvirt domain XML dynamically
-pub fn generate_domain_xml(_args: &CliArgs) -> String {
-    "Hello".to_string()
-    /*let mut domain = Element::new("domain");
+pub fn generate_domain_xml(args: &CliArgs) -> String {
+    let mut domain = Element::new("domain");
     domain.attributes.insert("type".to_string(), "kvm".to_string());
 
-    domain.children.push(Element::node("name").with_text(args.name.clone()));
+    let name = Element::node("name").with_text(args.name.clone());
+    domain.children.push(XMLNode::Element(name));
     
-    let mut memory = Element::node("memory").with_text(args.memory_mb.to_string());
+    let mut memory = Element::node("memory").with_text(args.memory.to_string());
     memory.attributes.insert("unit".to_string(), "MiB".to_string());
     domain.children.push(XMLNode::Element(memory));
 
-    domain.children.push(Element::node("vcpu").with_text(args.vcpus.to_string()));
+    domain.children.push(XMLNode::Element(Element::node("vcpu").with_text(args.vcpus.to_string())));
 
     // OS Section
     let mut os = Element::new("os");
-    os.children.push(Element::node("type").with_text("hvm").with_attr("arch", "x86_64"));
+    os.children.push(XMLNode::Element(Element::node("type").with_text("hvm".to_string()).with_attr("arch", "x86_64")));
 
     let boot1 = Element::node("boot").with_attr("dev", "cdrom");
     let boot2 = Element::node("boot").with_attr("dev", "hd");
@@ -63,7 +63,7 @@ pub fn generate_domain_xml(_args: &CliArgs) -> String {
     }
 
     // Console
-    devices.children.push(Element::node("console").with_attr("type", "pty").into());
+    devices.children.push(XMLNode::Element(Element::node("console").with_attr("type", "pty")));
 
     domain.children.push(XMLNode::Element(devices));
 
@@ -94,5 +94,5 @@ impl XmlHelper for Element {
     fn with_attr(mut self, key: &str, value: &str) -> Self {
         self.attributes.insert(key.to_string(), value.to_string());
         self
-    }*/
+    }
 }
