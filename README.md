@@ -17,5 +17,6 @@ target/debug/virt-install-rs \
     --name testvm \
     --memory 1024 \
     --vcpus 2 \
+    --boot uefi,loader_secure=yes,loader=/usr/share/OVMF/OVMF_CODE_4M.fd \
     --disk-path $(realpath jammy-server-cloudimg-amd64.img)
 ```
