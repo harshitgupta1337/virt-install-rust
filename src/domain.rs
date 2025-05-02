@@ -1,5 +1,9 @@
 use crate::cli::CliArgs;
+use crate::cli::FIRMWARE_TYPE_KEY;
 use xmltree::{Element, XMLNode};
+
+pub const LOADER_KEY: &str = "loader";
+pub const LOADER_SECURE_KEY: &str = "loader_secure";
 
 /// Build the libvirt domain XML dynamically
 pub fn generate_domain_xml(args: &CliArgs) -> String {
@@ -12,11 +16,27 @@ pub fn generate_domain_xml(args: &CliArgs) -> String {
     let mut memory = Element::node("memory").with_text(args.memory.to_string());
     memory.attributes.insert("unit".to_string(), "MiB".to_string());
     domain.children.push(XMLNode::Element(memory));
-
     domain.children.push(XMLNode::Element(Element::node("vcpu").with_text(args.vcpus.to_string())));
 
     // OS Section
     let mut os = Element::new("os");
+    if let Some(firmware_type) = args.boot.get(FIRMWARE_TYPE_KEY) {
+        os = os.with_attr("type", firmware_type);
+    }
+    // Parse the value passed to --boot argument.
+    if let Some(firmware_type) = args.boot.get(FIRMWARE_TYPE_KEY) {
+        os = os.with_attr("type", firmware_type);
+    }
+    // Define the loader
+    let mut loader = Element::node("loader");
+    if let Some(loader_secure) = args.boot.get(LOADER_SECURE_KEY) {
+        loader = loader.with_attr("secure", loader_secure);
+    }
+    if let Some(loader_path) = args.boot.get(LOADER_KEY) {
+        loader = loader.with_text(loader_path.to_string());
+    }
+    os.children.push(XMLNode::Element(loader));
+   
     os.children.push(XMLNode::Element(Element::node("type").with_text("hvm".to_string()).with_attr("arch", "x86_64")));
 
     let boot1 = Element::node("boot").with_attr("dev", "cdrom");
